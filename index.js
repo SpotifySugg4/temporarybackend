@@ -5,6 +5,6 @@ require("dotenv").config();
 const ENV = process.env.NODE_ENV;
 const PORT = process.env.PORT;
 
-server.listen(8000, () => {
+server.listen(PORT, () => {
   console.log(`\n === SERVER RUNNING ON ${PORT} === `.magenta.bold.underline);
 });
