@@ -20,8 +20,11 @@ router.post("/register", validateRegUser, (req, res) => {
       } else {
         Users.add(newUser)
           .then((usr) => {
+            token = createToken(user);
             res.status(201).json({
+              message: "User Created and Logged In",
               data: usr,
+              token,
             });
           })
           .catch((error) => res.send(error));
