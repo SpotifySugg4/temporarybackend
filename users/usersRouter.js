@@ -2,11 +2,15 @@ const router = require("express").Router();
 const bcryptjs = require("bcryptjs");
 
 const Users = require("./usersmodel.js");
-const { validateRegUser, passHash } = require("./usersmiddleware.js");
+const {
+  validateRegUser,
+  validateLoginUser,
+  passHash,
+  createToken,
+} = require("./usersmiddleware.js");
 
 router.post("/register", validateRegUser, (req, res) => {
   const user = req.body;
-  console.log(req);
   const newUser = passHash(user);
   const email = user.email;
   Users.findUserBy({ email })
@@ -24,6 +28,20 @@ router.post("/register", validateRegUser, (req, res) => {
       }
     })
     .catch((error) => res.send(error));
+});
+
+router.post("/login", validateLoginUser, (req, res) => {
+  const { email, password } = req.body;
+  Users.findUserBy({ email }).then(([user]) => {
+    if (user && bcryptjs.compareSync(password, user.password)) {
+      token = createToken(user);
+      res.status(200).json({
+        message: "User Logged in",
+        user,
+        token,
+      });
+    }
+  });
 });
 
 module.exports = router;
